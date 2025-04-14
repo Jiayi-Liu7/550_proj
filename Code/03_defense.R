@@ -4,10 +4,9 @@
 # Analysis 2: Create grouped bar plots of defensive metrics
 
 
-suppressPackageStartupMessages({
-  library(tidyverse)
-  library(ggplot2)
-})
+library(tidyverse)
+library(ggplot2)
+
 
 # Define output path
 output_path <- "Output/"
