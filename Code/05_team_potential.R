@@ -1,5 +1,6 @@
 # Load required packages
 library(tidyverse)
+library(knitr)
 library(dplyr)
 library(ggradar)
 library(gridExtra)
@@ -63,6 +64,24 @@ team_norm <- team_norm %>%
 top6 <- team_norm %>%
   arrange(desc(Potential_Score)) %>%
   slice(1:6)
+
+# Merge and round for table
+team_output <- team_avg %>%
+  left_join(team_norm %>% select(Team, Potential_Score), by = "Team") %>%
+  arrange(desc(Potential_Score)) %>%
+  slice(1:6) %>%
+  select(Team, Age, FG_percent, X3P_percent, FT_percent, PTS, STL, BLK, DRB, Potential_Score) %>%
+  mutate(across(where(is.numeric), \(x) round(x, 3)))
+
+# Create a nicely formatted kable table
+table_one <- team_output %>%
+  kable(caption = "Top 6 NBA Teams by Potential Score")
+
+# Save as RDS file
+saveRDS(
+  table_one,
+  file = here::here("Output/top6_teams_table.rds")
+)
 
 # Prepare data for ggradar (must include group column and be in long format)
 radar_df <- top6 %>%
