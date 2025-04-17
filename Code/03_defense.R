@@ -11,14 +11,6 @@ library(ggplot2)
 # Define output path
 output_path <- "Output/"
 
-# Create output directories
-if(!dir.exists(paste0(output_path, "tables"))) {
-  dir.create(paste0(output_path, "tables"), recursive = TRUE)
-}
-if(!dir.exists(paste0(output_path, "plots"))) {
-  dir.create(paste0(output_path, "plots"), recursive = TRUE)
-}
-
 # Load the cleaned dataset
 nba_data <- read.csv("Output/nba_clean.csv")
 
@@ -38,7 +30,7 @@ rebound_by_pos <- nba_data %>%
   arrange(desc(Avg_TRB))
 
 # Save the summary table
-write.csv(rebound_by_pos, paste0(output_path, "tables/rebounding_by_position.csv"), row.names = FALSE)
+write.csv(rebound_by_pos, paste0(output_path, "rebounding_by_position.csv"), row.names = FALSE)
 
 # Prepare data for plotting
 rebound_long <- rebound_by_pos %>%
@@ -64,7 +56,7 @@ p1 <- ggplot(rebound_long, aes(x = Pos, y = Average, fill = Rebound_Type)) +
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5),
         plot.title = element_text(hjust = 0.5, face = "bold"))
 
-ggsave(paste0(output_path, "plots/rebounds_by_position_stacked.png"), p1, width = 8, height = 6, dpi = 400)
+ggsave(paste0(output_path, "rebounds_by_position_stacked.png"), p1, width = 8, height = 6, dpi = 400)
 
 # Analysis 2: Create grouped bar plots of defensive metrics
 # Calculate average defensive statistics by position
@@ -77,7 +69,7 @@ defense_by_pos <- nba_data %>%
   )
 
 # Save the summary table
-write.csv(defense_by_pos, paste0(output_path, "tables/defense_by_position.csv"), row.names = FALSE)
+write.csv(defense_by_pos, paste0(output_path, "defense_by_position.csv"), row.names = FALSE)
 
 # Prepare data for plotting
 defense_long <- defense_by_pos %>%
@@ -99,7 +91,7 @@ p2 <- ggplot(defense_long, aes(x = Pos, y = Average, fill = Defensive_Metric)) +
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5),
         plot.title = element_text(hjust = 0.5, face = "bold"))
 
-ggsave(paste0(output_path, "plots/defensive_metrics_by_position.png"), p2, width = 8, height = 6, dpi = 400)
+ggsave(paste0(output_path, "defensive_metrics_by_position.png"), p2, width = 8, height = 6, dpi = 400)
 
 # Print summary information
 cat("\nSummary of Rebounding by Position:\n")
