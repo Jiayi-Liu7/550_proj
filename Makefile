@@ -4,8 +4,8 @@
 SCRIPTS := \
   Code/01_data_clean.R \
   Code/02_scoring.R \
+  Code/03_defense.R \
   Code/04_age.R \
-  Code/02_scoring.R \
   Code/05_team_potential.R
 
 # Report files
