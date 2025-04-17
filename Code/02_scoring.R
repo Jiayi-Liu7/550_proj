@@ -55,7 +55,7 @@ plot_bar <- ggplot(scoring_long,
        y = "Average Points per 36 min") +
   theme_minimal(base_size = 14)
 
-ggsave(here("Output", "plots", "scoring_sources_by_position.png"),
+ggsave(here("Output", "scoring_sources_by_position.png"),
        plot_bar, width = 8, height = 6, dpi = 400)
 
 # Box plot: Distribution of shooting percentage 
@@ -68,7 +68,7 @@ plot_box <- ggplot(nba, aes(Pos, `FG%`, fill = Pos)) +
        y = "FG%") +
   theme_minimal(base_size = 14)
 
-ggsave(here("Output", "plots", "boxplot_fg_by_pos.png"),
+ggsave(here("Output", "boxplot_fg_by_pos.png"),
        plot_box, width = 8, height = 6, dpi = 400)
 
 # Scatter plot: Efficiency vs. Score
@@ -84,5 +84,5 @@ plot_scatter <- ggplot(nba,
        size = "Pts") +
   theme_minimal(base_size = 14)
 
-ggsave(here("Output", "plots", "scatter_efficiency_vs_pts.png"),
+ggsave(here("Output", "scatter_efficiency_vs_pts.png"),
        plot_scatter, width = 8, height = 6, dpi = 400)
