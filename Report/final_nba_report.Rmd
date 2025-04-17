@@ -1,5 +1,194 @@
 ---
-title: "final_nba_report"
+title: "Midterm_nba_report"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
 output: html_document
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo       = FALSE,
+  warning    = FALSE,
+  message    = FALSE,
+  fig.width  = 8,
+  fig.height = 6
+)
+library(here)
+library(readr)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+```
+
+
+# Introduction
+This report examines per‑36‑minute NBA player statistics (as of March 7, 2025). It covers:
+
+1. Data cleaning and preparation
+2. Scoring analysis by position
+3. Defensive and rebounding metrics
+4. Age and experience relationships
+5. Team potential ranking
+
+Scripts are located in `Code/`, and all outputs are written to `Output/`.
+
+
+# Data Analysis
+
+## Coder1:
+
+# 1. Data Cleaning Process  
+
+The source file was downloaded and imported into Excel. A comma‑delimited export produced **NBA.xlsx**, which was then saved as **nba_2025-03-07.csv**. Static cells requiring no computation were verified against common‑sense values and assumed correct. Computed columns exhibited missing values (blank or NA) due to zero denominators in original formulas. We removed the `reward` column and the `League Average` row, then recomputed percentage‑based columns (`3P%`, `2P%`, `eFG%`, `FT%`) rounding to three decimal places. The final cleaned dataset was saved as **nba_clean.csv** in the `Output/` folder.  
+
+# 2. Read and Clean NBA Data
+
+```{r read-data}
+nba_clean <- read_csv(here::here("Output", "nba_clean.csv"))
+head(nba_clean, 5)
+```
+
+# 3. Descriptive Statistics
+
+Summary of key performance metrics (Points, Rebounds, Assists, eFG%, FT%):
+
+```{r desc-stats}
+desc_stats <- read_csv(here::here("Output", "desc_stats.csv"))
+kable(desc_stats, caption = "Descriptive Statistics for Key Metrics") %>%
+  kable_styling(full_width = FALSE)
+```
+
+# 4. Summary Tables by Group
+
+## 4.1 Team Summary
+
+```{r team-summary}
+team_summary <- read_csv(here::here("Output", "team_summary.csv"))
+kable(team_summary, caption = "Summary by Team") %>%
+  kable_styling(full_width = FALSE)
+```
+
+## 4.2 Position Summary
+
+```{r position-summary}
+pos_summary <- read_csv(here::here("Output", "position_summary.csv"))
+kable(pos_summary, caption = "Summary by Position") %>%
+  kable_styling(full_width = FALSE)
+```
+
+# 5. Player Ranking Tables
+
+## 5.1 Points Ranking
+
+```{r points-ranking}
+points_ranking <- read_csv(here::here("Output", "points_ranking.csv"))
+kable(head(points_ranking, 10), caption = "Top 10 Players by Points") %>%
+  kable_styling(full_width = FALSE)
+```
+
+## 5.2 Rebounds Ranking
+
+```{r rebounds-ranking}
+rebounds_ranking <- read_csv(here::here("Output", "rebounds_ranking.csv"))
+kable(head(rebounds_ranking, 10), caption = "Top 10 Players by Rebounds") %>%
+  kable_styling(full_width = FALSE)
+```
+
+## 5.3 Assists Ranking
+
+```{r assists-ranking}
+assists_ranking <- read_csv(here::here("Output", "assists_ranking.csv"))
+kable(head(assists_ranking, 10), caption = "Top 10 Players by Assists") %>%
+  kable_styling(full_width = FALSE)
+```
+
+## 5.4 Overall Ranking
+
+```{r overall-ranking}
+overall_ranking <- read_csv(here::here("Output", "overall_ranking.csv"))
+kable(head(overall_ranking, 10), caption = "Overall Top 10 Players") %>%
+  kable_styling(full_width = FALSE)
+```
+
+# 6. Visualizations
+
+## 6.1 Team Distribution
+
+### Bar Chart
+
+```{r team-bar, fig.cap="Number of Players by Team", echo=FALSE}
+knitr::include_graphics(
+  here::here("Output", "team_bar_chart.png")
+)
+```
+
+
+## 6.2 Position Distribution
+
+### Bar Chart
+
+```{r position-bar, fig.cap="Number of Players by Position", echo=FALSE}
+knitr::include_graphics(
+  here::here("Output", "position_bar_chart.png")
+)
+```
+
+### Pie Chart
+
+```{r position-pie, fig.cap="Position Distribution as Percentage", echo=FALSE}
+knitr::include_graphics(
+  here::here("Output", "position_pie_chart.png")
+)
+```
+
+## 6.3 Age Distribution
+
+```{r age-dist, fig.cap="Age Distribution (10 Intervals) with Counts", echo=FALSE}
+knitr::include_graphics(
+  here::here("Output", "age_distribution.png")
+)
+```
+
+
+
+## Coder2:
+
+
+
+## Coder3:
+
+
+
+## Coder4:
+
+
+## Coder 5: Identifying top 5 potential NBA teams
+Based on the analysis for individual players, we can now conduct data analysis at the team level. Upon reviewing the original dataset, we observe that our NBA dataset includes player-level statistics, such as:
+
+1. Youth (Age): Represented by the "Age" column.
+
+2. Scoring Efficiency: Represented by FG%, 3P%, FT%, or PTS.
+
+3. Defensive Ability: Estimated using STL, BLK, and DRB.
+
+By assigning weights to each of these categories—Youth (40%), Scoring Efficiency (30%), and Defensive Ability (30%)—we can calculate the Potential_Score for each team. This allows us to determine the top 6 teams with the highest potential.
+
+Here are the results:
+
+```{r, table-top6_teams_table}
+table_one <- readRDS(
+  file = here::here("Output/top6_teams_table.rds")
+)
+table_one
+```
+
+We also generate radar plots for these 6 teams using a 9-dimension profile: Youth (inverse age), FG% (Field Goal %), 3P% (Three Point %), FT% (Free Throw %), PTS (Points per game), STL (Steals), BLK (Blocks) and DRB (Defensive rebounds).
+
+```{r, radar-plot}
+#| fig.align = "center",
+knitr::include_graphics(
+  here::here("Output/top6_team_radar_grid.png")
+)
+```
+
+
 
