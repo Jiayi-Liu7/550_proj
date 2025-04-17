@@ -86,3 +86,4 @@ plot_scatter <- ggplot(nba,
 
 ggsave(here("Output", "scatter_efficiency_vs_pts.png"),
        plot_scatter, width = 8, height = 6, dpi = 400)
+
