@@ -1,0 +1,15 @@
+environment:
+  production: TRUE  # TRUE=full analysis, FALSE=test mode (sample data)
+  cutpoint: 1       # 1=strict filtering (≥15 games), 0=no filtering
+
+paths:
+  data_input: "Data/nba_2025-03-07.csv"
+  output_dir: "Output"
+
+visualization:
+  figure_size: [8, 6]  # inches
+  dpi: 400
+  position_colors:
+    Guard: "#0077B6"
+    Forward: "#FF6B35"
+    Center: "#4C9A2A"
