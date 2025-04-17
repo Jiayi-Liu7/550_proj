@@ -1,5 +1,6 @@
 ---
 title: "Midterm_nba_report"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
 output: html_document
 ---
 ```{r, set-chunk-opts, echo = FALSE, eval = TRUE}
@@ -10,11 +11,15 @@ opts_chunk$set(
 ```
 
 # Introduction
+This report examines per‑36‑minute NBA player statistics (as of March 7, 2025). It covers:
 
+1. Data cleaning and preparation
+2. Scoring analysis by position
+3. Defensive and rebounding metrics
+4. Age and experience relationships
+5. Team potential ranking
 
-
-## Analysis objectives
-
+Scripts are located in `Code/`, and all outputs are written to `Output/`.
 
 
 # Data Analysis
