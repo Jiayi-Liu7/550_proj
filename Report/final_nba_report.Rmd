@@ -1,5 +1,67 @@
 ---
-title: "final_nba_report"
+title: "Midterm_nba_report"
 output: html_document
 ---
+```{r, set-chunk-opts, echo = FALSE, eval = TRUE}
+library(knitr)
+opts_chunk$set(
+  echo = FALSE, warning = FALSE, message = FALSE
+)
+```
+
+# Introduction
+
+
+
+## Analysis objectives
+
+
+
+# Data Analysis
+
+## Coder1:
+
+
+## Coder2:
+
+
+
+## Coder3:
+
+
+
+## Coder4:
+
+
+## Coder 5: Identifying top 5 potential NBA teams
+Based on the analysis for individual players, we can now conduct data analysis at the team level. Upon reviewing the original dataset, we observe that our NBA dataset includes player-level statistics, such as:
+
+1. Youth (Age): Represented by the "Age" column.
+
+2. Scoring Efficiency: Represented by FG%, 3P%, FT%, or PTS.
+
+3. Defensive Ability: Estimated using STL, BLK, and DRB.
+
+By assigning weights to each of these categories—Youth (40%), Scoring Efficiency (30%), and Defensive Ability (30%)—we can calculate the Potential_Score for each team. This allows us to determine the top 6 teams with the highest potential.
+
+Here are the results:
+
+```{r, table-top6_teams_table}
+table_one <- readRDS(
+  file = here::here("Output/top6_teams_table.rds")
+)
+table_one
+```
+
+We also generate radar plots for these 6 teams using a 9-dimension profile: Youth (inverse age), FG% (Field Goal %), 3P% (Three Point %), FT% (Free Throw %), PTS (Points per game), STL (Steals), BLK (Blocks) and DRB (Defensive rebounds).
+
+```{r, radar-plot}
+#| fig.align = "center",
+knitr::include_graphics(
+  here::here("Output/top6_team_radar_grid.png")
+)
+```
+#Discussion
+
+
 
