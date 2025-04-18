@@ -17,6 +17,7 @@ library(readr)
 library(dplyr)
 library(knitr)
 library(kableExtra)
+library(tidyverse)
 ```
 
 # Introduction
@@ -130,7 +131,105 @@ knitr::include_graphics(
 
 ## Coder 2:
 
-## Coder 3:
+## Coder 3: Defense and Rebounding Analysis
+
+```{r defense-setup, include=FALSE}
+here::i_am("Report/final_nba_report.Rmd")
+```
+
+### 1. Rebounding Analysis by Position
+
+Rebounding is a crucial aspect of basketball that ends opponent possessions and creates second-chance opportunities. We analyzed how different positions contribute to team rebounding efforts.
+
+```{r rebounding-analysis}
+rebound_data <- read.csv(here::here("Output", "rebounding_by_position.csv"))
+
+# Display rebounding statistics table
+rebound_data %>%
+  select(Pos, Avg_ORB, Avg_DRB, Avg_TRB, n) %>%
+  arrange(desc(Avg_TRB)) %>%
+  kable(caption = "Rebounding Statistics by Position", 
+        col.names = c("Position", "Offensive Rebounds", "Defensive Rebounds", 
+                      "Total Rebounds", "Number of Players"),
+        digits = 2) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+The visualization below shows the breakdown between offensive and defensive rebounds across positions:
+
+```{r rebounding-viz, echo=FALSE, fig.width=10, fig.height=6}
+# Display the rebounding chart
+knitr::include_graphics(here::here("Output", "rebounds_by_position_stacked.png"))
+```
+
+**Key Findings:**
+- Centers lead in total rebounding, with particular strength in defensive rebounds
+- Power forwards are second in rebounding contribution
+- Guards (PG, SG) have the lowest rebounding numbers, as expected given their role and typical positioning
+
+### 2. Defensive Metrics Analysis by Position
+
+We also analyzed key defensive statistics (steals and blocks) to understand how different positions contribute to team defense.
+
+```{r defensive-analysis}
+# Load the generated defensive data
+defense_data <- read.csv(here::here("Output", "defense_by_position.csv"))
+
+# Display defensive statistics table
+defense_data %>%
+  select(Pos, Avg_STL, Avg_BLK, n) %>%
+  kable(caption = "Defensive Statistics by Position",
+        col.names = c("Position", "Steals", "Blocks", "Number of Players"),
+        digits = 2) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+The visualization below compares steals and blocks across positions:
+
+```{r defensive-viz, echo=FALSE, fig.width=10, fig.height=6}
+# Display the defensive metrics chart
+knitr::include_graphics(here::here("Output", "defensive_metrics_by_position.png"))
+```
+
+**Key Findings:**
+- Point guards excel at generating steals but provide minimal shot-blocking
+- Centers dominate in blocks while contributing fewer steals
+- Each position shows a distinct defensive profile that aligns with their typical role on the court
+
+### 3. Position Role Analysis
+
+```{r position-role, echo=FALSE}
+# Combine rebounding and defensive data
+position_metrics <- merge(rebound_data, defense_data, by = "Pos")
+
+# Calculate composite scores
+position_metrics <- position_metrics %>%
+  mutate(
+    Rebounding_Score = (Avg_ORB * 0.35) + (Avg_DRB * 0.65),
+    Defensive_Score = (Avg_STL * 0.5) + (Avg_BLK * 0.5),
+    Total_Score = (Rebounding_Score * 0.5) + (Defensive_Score * 0.5)
+  ) %>%
+  arrange(desc(Total_Score))
+
+# Display combined metrics
+position_metrics %>%
+  select(Pos, Rebounding_Score, Defensive_Score, Total_Score) %>%
+  kable(caption = "Combined Defensive and Rebounding Metrics by Position",
+        digits = 2) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+  row_spec(1, background = "#E8F8F5") # Highlight top position
+```
+
+By combining our defensive and rebounding metrics, we can characterize the overall defensive contribution of each position:
+
+1. **Centers (C)**: Primary rim protectors and rebounders
+2. **Power Forwards (PF)**: Secondary rim protectors with strong rebounding
+3. **Small Forwards (SF)**: Balanced defensive contributors
+4. **Point Guards (PG)**: Perimeter defenders specializing in disrupting passing lanes
+5. **Shooting Guards (SG)**: Secondary perimeter defenders
+
+These distinct roles highlight how basketball teams rely on position specialization to create a complete defensive system.
+
 
 ## Coder 4:
 
