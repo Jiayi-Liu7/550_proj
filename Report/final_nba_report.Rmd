@@ -4,30 +4,265 @@ date: "`r format(Sys.Date(), '%B %d, %Y')`"
 output: html_document
 knit: rmarkdown::render
 ---
-```{r, set-chunk-opts, echo = FALSE, eval = TRUE}
-library(knitr)
-opts_chunk$set(
-  echo = FALSE, warning = FALSE, message = FALSE
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo       = FALSE,
+  warning    = FALSE,
+  message    = FALSE,
+  fig.width  = 8,
+  fig.height = 6
 )
+library(here)
+library(readr)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(tidyverse)
 ```
 
 # Introduction
 This report examines per‑36‑minute NBA player statistics (as of March 7, 2025). It covers:
 
-1. Data cleaning and preparation
-2. Scoring analysis by position
-3. Defensive and rebounding metrics
-4. Age and experience relationships
+1. Data cleaning and preparation  
+2. Scoring analysis by position  
+3. Defensive and rebounding metrics  
+4. Age and experience relationships  
 5. Team potential ranking
 
 Scripts are located in `Code/`, and all outputs are written to `Output/`.
 
-
 # Data Analysis
 
-## Coder1:
+## Coder 1: Data Preparation & Player Summary
+
+### 1. Data Cleaning Process  
+The source file was downloaded and imported into Excel. A comma‑delimited export produced **NBA.xlsx**, which was then saved as **nba_2025-03-07.csv**. Static cells requiring no computation were verified against common‑sense values and assumed correct. Computed columns exhibited missing values (blank or NA) due to zero denominators in original formulas. We removed the `reward` column and the `League Average` row, then recomputed percentage‑based columns (`3P%`, `2P%`, `eFG%`, `FT%`) rounding to three decimal places. The final cleaned dataset was saved as **nba_clean.csv** in the `Output/` folder.  
+
+### 2. Read and Clean NBA Data
+
+```{r read-data}
+nba_clean <- read_csv(here::here("Output", "nba_clean.csv"))
+head(nba_clean, 5)
+```
+
+### 3. Descriptive Statistics
+
+```{r desc-stats}
+desc_stats <- read_csv(here::here("Output", "desc_stats.csv"))
+kable(desc_stats, caption = "Descriptive Statistics for Key Metrics") %>%
+  kable_styling(full_width = FALSE)
+```
+
+### 4. Summary Tables by Group
+
+```{r team-summary}
+team_summary <- read_csv(here::here("Output", "team_summary.csv"))
+kable(team_summary, caption = "Summary by Team") %>%
+  kable_styling(full_width = FALSE)
+```
+
+```{r position-summary}
+pos_summary <- read_csv(here::here("Output", "position_summary.csv"))
+kable(pos_summary, caption = "Summary by Position") %>%
+  kable_styling(full_width = FALSE)
+```
+
+### 5. Player Ranking Tables
+
+```{r points-ranking}
+points_ranking <- read_csv(here::here("Output", "points_ranking.csv"))
+kable(head(points_ranking, 10), caption = "Top 10 Players by Points") %>%
+  kable_styling(full_width = FALSE)
+```
+
+```{r rebounds-ranking}
+rebounds_ranking <- read_csv(here::here("Output", "rebounds_ranking.csv"))
+kable(head(rebounds_ranking, 10), caption = "Top 10 Players by Rebounds") %>%
+  kable_styling(full_width = FALSE)
+```
+
+```{r assists-ranking}
+assists_ranking <- read_csv(here::here("Output", "assists_ranking.csv"))
+kable(head(assists_ranking, 10), caption = "Top 10 Players by Assists") %>%
+  kable_styling(full_width = FALSE)
+```
+
+```{r overall-ranking}
+overall_ranking <- read_csv(here::here("Output", "overall_ranking.csv"))
+kable(head(overall_ranking, 10), caption = "Overall Top 10 Players") %>%
+  kable_styling(full_width = FALSE)
+```
+
+### 6. Visualizations
+
+We created several plots to better understand the structure of the dataset in terms of team composition, position roles, and age distribution.
+
+We first visualize the number of players per team, highlighting which teams have the largest or smallest rosters.
+
+```{r team-bar, fig.cap="Number of Players by Team"}
+knitr::include_graphics(
+  here::here("Output", "team_bar_chart.png")
+)
+```
+
+Next, we assess the distribution of players across different positions using a bar chart.
+
+```{r position-bar, fig.cap="Number of Players by Position"}
+knitr::include_graphics(
+  here::here("Output", "position_bar_chart.png")
+)
+```
+
+The following pie chart shows the percentage breakdown of players by position, offering a proportional view.
+
+```{r position-pie, fig.cap="Position Distribution as Percentage"}
+knitr::include_graphics(
+  here::here("Output", "position_pie_chart.png")
+)
+```
+
+Lastly, we explore the age structure of players using a histogram divided into 10 equal-width intervals.
+
+```{r age-dist, fig.cap="Age Distribution (10 Intervals) with Counts"}
+knitr::include_graphics(
+  here::here("Output", "age_distribution.png")
+)
+```
+
+## Coder 2: Scoring analysis by position
+We compared how guards, forwards, and centers generate their points and how efficient they are.
+
+<div style="page-break-after:always"></div>
+
+### 2.1 Sources of points  
+
+```{r scoring-bar, fig.align='center'}
+knitr::include_graphics("../Output/scoring_sources_by_position.png")
+```
 
 
+Centers score most of their points through 2-point field goals and free throws, with almost no reliance on three-pointers. Forwards exhibit a more balanced distribution, contributing across all three scoring methods. Guards rely heavily on three-pointers, with a notable drop in 2-point scoring compared to centers. This breakdown reflects each position’s typical playstyle, with centers dominating inside the paint and guards operating from the perimeter.
+
+### 2.2 Shooting‑percentage distribution  
+```{r}
+knitr::include_graphics("../Output/boxplot_fg_by_pos.png")
+
+```
+
+
+Centers demonstrate the highest median field goal percentage, along with the widest range of efficiency. This is consistent with their shot selection, which tends to be closer to the basket. Forwards and guards show lower medians and tighter distributions, suggesting greater variability and more difficult shot attempts, particularly for guards who often shoot from distance.
+
+### 2.3 Efficiency versus scoring volume  
+```{r}
+knitr::include_graphics("../Output/scatter_efficiency_vs_pts.png")
+```
+
+
+This scatter plot shows how field-goal percentage relates to scoring volume for players across positions. Most high-volume scorers with strong efficiency are guards (blue), confirming their central offensive roles. Centers (green) tend to be more efficient but with lower usage, reflecting their role as finishers. Forwards (orange) are spread throughout, showing their versatility. Larger dots (representing higher PTS) cluster around 0.5 FG%, reinforcing that elite scorers often balance shot volume with efficiency.
+
+
+## Coder 3: Defense and Rebounding Analysis
+
+```{r defense-setup, include=FALSE}
+here::i_am("Report/final_nba_report.Rmd")
+```
+
+### 1. Rebounding Analysis by Position
+
+Rebounding is a crucial aspect of basketball that ends opponent possessions and creates second-chance opportunities. We analyzed how different positions contribute to team rebounding efforts.
+
+```{r rebounding-analysis}
+rebound_data <- read.csv(here::here("Output", "rebounding_by_position.csv"))
+
+# Display rebounding statistics table
+rebound_data %>%
+  select(Pos, Avg_ORB, Avg_DRB, Avg_TRB, n) %>%
+  arrange(desc(Avg_TRB)) %>%
+  kable(caption = "Rebounding Statistics by Position", 
+        col.names = c("Position", "Offensive Rebounds", "Defensive Rebounds", 
+                      "Total Rebounds", "Number of Players"),
+        digits = 2) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+The visualization below shows the breakdown between offensive and defensive rebounds across positions:
+
+```{r rebounding-viz, echo=FALSE, fig.width=10, fig.height=6}
+# Display the rebounding chart
+knitr::include_graphics(here::here("Output", "rebounds_by_position_stacked.png"))
+```
+
+**Key Findings:**
+- Centers lead in total rebounding, with particular strength in defensive rebounds
+- Power forwards are second in rebounding contribution
+- Guards (PG, SG) have the lowest rebounding numbers, as expected given their role and typical positioning
+
+### 2. Defensive Metrics Analysis by Position
+
+We also analyzed key defensive statistics (steals and blocks) to understand how different positions contribute to team defense.
+
+```{r defensive-analysis}
+# Load the generated defensive data
+defense_data <- read.csv(here::here("Output", "defense_by_position.csv"))
+
+# Display defensive statistics table
+defense_data %>%
+  select(Pos, Avg_STL, Avg_BLK, n) %>%
+  kable(caption = "Defensive Statistics by Position",
+        col.names = c("Position", "Steals", "Blocks", "Number of Players"),
+        digits = 2) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+The visualization below compares steals and blocks across positions:
+
+```{r defensive-viz, echo=FALSE, fig.width=10, fig.height=6}
+# Display the defensive metrics chart
+knitr::include_graphics(here::here("Output", "defensive_metrics_by_position.png"))
+```
+
+**Key Findings:**
+- Point guards excel at generating steals but provide minimal shot-blocking
+- Centers dominate in blocks while contributing fewer steals
+- Each position shows a distinct defensive profile that aligns with their typical role on the court
+
+### 3. Position Role Analysis
+
+```{r position-role, echo=FALSE}
+# Combine rebounding and defensive data
+position_metrics <- merge(rebound_data, defense_data, by = "Pos")
+
+# Calculate composite scores
+position_metrics <- position_metrics %>%
+  mutate(
+    Rebounding_Score = (Avg_ORB * 0.35) + (Avg_DRB * 0.65),
+    Defensive_Score = (Avg_STL * 0.5) + (Avg_BLK * 0.5),
+    Total_Score = (Rebounding_Score * 0.5) + (Defensive_Score * 0.5)
+  ) %>%
+  arrange(desc(Total_Score))
+
+# Display combined metrics
+position_metrics %>%
+  select(Pos, Rebounding_Score, Defensive_Score, Total_Score) %>%
+  kable(caption = "Combined Defensive and Rebounding Metrics by Position",
+        digits = 2) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+  row_spec(1, background = "#E8F8F5") # Highlight top position
+```
+
+By combining our defensive and rebounding metrics, we can characterize the overall defensive contribution of each position:
+
+1. **Centers (C)**: Primary rim protectors and rebounders
+2. **Power Forwards (PF)**: Secondary rim protectors with strong rebounding
+3. **Small Forwards (SF)**: Balanced defensive contributors
+4. **Point Guards (PG)**: Perimeter defenders specializing in disrupting passing lanes
+5. **Shooting Guards (SG)**: Secondary perimeter defenders
+
+These distinct roles highlight how basketball teams rely on position specialization to create a complete defensive system.
+
+
+<<<<<<< HEAD
 ## Coder2: Scoring analysis by position
 We compared how guards, forwards, and centers generate their points and how efficient they are.
 
@@ -57,44 +292,32 @@ knitr::include_graphics("../Output/scatter_efficiency_vs_pts.png")
 ```
 
 This scatter plot shows how field-goal percentage relates to scoring volume for players across positions. Most high-volume scorers with strong efficiency are guards (blue), confirming their central offensive roles. Centers (green) tend to be more efficient but with lower usage, reflecting their role as finishers. Forwards (orange) are spread throughout, showing their versatility. Larger dots (representing higher PTS) cluster around 0.5 FG%, reinforcing that elite scorers often balance shot volume with efficiency.
+=======
+## Coder 4:
 
+## Coder 5: Identifying Top 5 Potential NBA Teams
+>>>>>>> upstream/main
 
-## Coder3:
-
-
-
-## Coder4:
-
-
-## Coder 5: Identifying top 5 potential NBA teams
 Based on the analysis for individual players, we can now conduct data analysis at the team level. Upon reviewing the original dataset, we observe that our NBA dataset includes player-level statistics, such as:
 
 1. Youth (Age): Represented by the "Age" column.
-
 2. Scoring Efficiency: Represented by FG%, 3P%, FT%, or PTS.
-
 3. Defensive Ability: Estimated using STL, BLK, and DRB.
 
 By assigning weights to each of these categories—Youth (40%), Scoring Efficiency (30%), and Defensive Ability (30%)—we can calculate the Potential_Score for each team. This allows us to determine the top 6 teams with the highest potential.
 
-Here are the results:
-
-```{r, table-top6_teams_table}
-table_one <- readRDS(
-  file = here::here("Output/top6_teams_table.rds")
-)
+```{r table-top6_teams_table}
+table_one <- readRDS(here::here("Output", "top6_teams_table.rds"))
 table_one
 ```
 
+
 We also generate radar plots for these 6 teams using a 9-dimension profile: Youth (inverse age), FG% (Field Goal %), 3P% (Three Point %), FT% (Free Throw %), PTS (Points per game), STL (Steals), BLK (Blocks) and DRB (Defensive rebounds).
 
-```{r, radar-plot}
-#| fig.align = "center",
+```{r radar-plot, fig.cap="Radar Profiles of Top 6 Teams"}
 knitr::include_graphics(
-  here::here("Output/top6_team_radar_grid.png")
+  here::here("Output", "top6_team_radar_grid.png")
 )
 ```
-#Discussion
-
 
 
