@@ -12,9 +12,13 @@ SCRIPTS := \
 RMD  := Report/final_nba_report.Rmd
 HTML := Report/final_nba_report.html
 
-.PHONY: all scripts report clean
+.PHONY: all install scripts report clean
 
-all: scripts report
+all: install scripts report
+
+install:
+	@echo "» Restoring R package library via renv…"
+	@Rscript -e "renv::restore(prompt = FALSE)"
 
 scripts:
 	@echo "» Running analysis scripts…"
