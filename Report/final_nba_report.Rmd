@@ -2,6 +2,7 @@
 title: "Midterm_nba_report"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 output: html_document
+knit: rmarkdown::render
 ---
 
 ```{r setup, include=FALSE}
@@ -129,7 +130,37 @@ knitr::include_graphics(
 )
 ```
 
-## Coder 2:
+## Coder 2: Scoring analysis by position
+We compared how guards, forwards, and centers generate their points and how efficient they are.
+
+<div style="page-break-after:always"></div>
+
+### 2.1 Sources of points  
+
+```{r scoring-bar, fig.align='center'}
+knitr::include_graphics("../Output/scoring_sources_by_position.png")
+```
+
+
+Centers score most of their points through 2-point field goals and free throws, with almost no reliance on three-pointers. Forwards exhibit a more balanced distribution, contributing across all three scoring methods. Guards rely heavily on three-pointers, with a notable drop in 2-point scoring compared to centers. This breakdown reflects each position’s typical playstyle, with centers dominating inside the paint and guards operating from the perimeter.
+
+### 2.2 Shooting‑percentage distribution  
+```{r}
+knitr::include_graphics("../Output/boxplot_fg_by_pos.png")
+
+```
+
+
+Centers demonstrate the highest median field goal percentage, along with the widest range of efficiency. This is consistent with their shot selection, which tends to be closer to the basket. Forwards and guards show lower medians and tighter distributions, suggesting greater variability and more difficult shot attempts, particularly for guards who often shoot from distance.
+
+### 2.3 Efficiency versus scoring volume  
+```{r}
+knitr::include_graphics("../Output/scatter_efficiency_vs_pts.png")
+```
+
+
+This scatter plot shows how field-goal percentage relates to scoring volume for players across positions. Most high-volume scorers with strong efficiency are guards (blue), confirming their central offensive roles. Centers (green) tend to be more efficient but with lower usage, reflecting their role as finishers. Forwards (orange) are spread throughout, showing their versatility. Larger dots (representing higher PTS) cluster around 0.5 FG%, reinforcing that elite scorers often balance shot volume with efficiency.
+
 
 ## Coder 3: Defense and Rebounding Analysis
 
@@ -295,7 +326,9 @@ peak_age
 ```
 
 
+
 ## Coder 5: Identifying Top 5 Potential NBA Teams
+
 
 Based on the analysis for individual players, we can now conduct data analysis at the team level. Upon reviewing the original dataset, we observe that our NBA dataset includes player-level statistics, such as:
 
