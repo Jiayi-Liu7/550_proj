@@ -262,41 +262,73 @@ By combining our defensive and rebounding metrics, we can characterize the overa
 These distinct roles highlight how basketball teams rely on position specialization to create a complete defensive system.
 
 
-<<<<<<< HEAD
-## Coder2: Scoring analysis by position
-We compared how guards, forwards, and centers generate their points and how efficient they are.
+## Coder 4: Age and Experience Analysis
 
-<div style="page-break-after:always"></div>
+This section investigates the relationship between player age and scoring performance. The metric used is points per 36 minutes (PTS). Visualizations include a density plot, scatter plot, and boxplot grouped by age. The analysis also identifies the peak performance age.
 
-### 2.1 Sources of points  
+```{r setup-c4}
+nba <- nba_clean
+```
 
+### 1. Density Plot of Age Distribution
 
-```{r barplot-sources, fig.align="center"}
-knitr::include_graphics("../Output/scoring_sources_by_position.png")
+The density plot below shows the age distribution of NBA players, highlighting the concentration of players in different age ranges.
+
+```{r age distribution, echo=FALSE}
+ggplot(nba, aes(x = Age)) +
+geom_density(fill = "skyblue", alpha = 0.5) +
+labs(x = "Age", y = "Density") +
+theme_minimal()
+```
+
+### 2. Age vs. Scoring Performance
+
+The scatter plot with LOESS smoothing demonstrates the relationship between age and scoring efficiency. Points represent individual players, and the blue curve indicates the trend.
+
+```{r Age vs. Scoring Efficiency, echo=FALSE}
+ggplot(nba, aes(x = Age, y = PTS)) +
+geom_point(alpha = 0.5) +
+geom_smooth(method = "loess", se = FALSE, color = "blue") +
+labs(x = "Age", y = "Points per 36 Minutes") +
+theme_minimal()
 ```
 
 
-Centers score most of their points through 2-point field goals and free throws, with almost no reliance on three-pointers. Forwards exhibit a more balanced distribution, contributing across all three scoring methods. Guards rely heavily on three-pointers, with a notable drop in 2-point scoring compared to centers. This breakdown reflects each position’s typical playstyle, with centers dominating inside the paint and guards operating from the perimeter.
+### 3. Scoring Distribution by Age Group
 
-### 2.2 Shooting‑percentage distribution  
-```{r}
-knitr::include_graphics("../Output/boxplot_fg_by_pos.png")
+Players are divided into five age groups. The boxplot reveals how scoring performance varies across different career stages.
+
+```{r Scoring by Age, echo=FALSE}
+nba <- nba %>%
+  mutate(age_group = cut(Age, breaks = c(18, 22, 26, 30, 34, 40),
+                         labels = c("18-22", "23-26", "27-30", "31-34", "35+"),
+                         right = FALSE))
+
+ggplot(nba, aes(x = age_group, y = PTS)) +
+  geom_boxplot(fill = "blue") +
+  labs(title = "Points per 36 Minutes by Age Group",
+       x = "Age Group", y = "Points") +
+  theme_minimal()
+```
+
+### 4. Peak Performance Age
+
+We identify the age at which players, on average, score the most points per 36 minutes. The table below shows the age with the highest mean scoring output.
+
+```{r Peak Performance Age, echo=FALSE}
+peak_age <- nba %>%
+  group_by(Age) %>%
+  summarise(mean_points = mean(PTS, na.rm = TRUE)) %>%
+  arrange(desc(mean_points)) %>%
+  slice(1)
+
+peak_age
 ```
 
 
-Centers demonstrate the highest median field goal percentage, along with the widest range of efficiency. This is consistent with their shot selection, which tends to be closer to the basket. Forwards and guards show lower medians and tighter distributions, suggesting greater variability and more difficult shot attempts, particularly for guards who often shoot from distance.
-
-### 2.3 Efficiency versus scoring volume  
-```{r}
-knitr::include_graphics("../Output/scatter_efficiency_vs_pts.png")
-```
-
-This scatter plot shows how field-goal percentage relates to scoring volume for players across positions. Most high-volume scorers with strong efficiency are guards (blue), confirming their central offensive roles. Centers (green) tend to be more efficient but with lower usage, reflecting their role as finishers. Forwards (orange) are spread throughout, showing their versatility. Larger dots (representing higher PTS) cluster around 0.5 FG%, reinforcing that elite scorers often balance shot volume with efficiency.
-=======
-## Coder 4:
 
 ## Coder 5: Identifying Top 5 Potential NBA Teams
->>>>>>> upstream/main
+
 
 Based on the analysis for individual players, we can now conduct data analysis at the team level. Upon reviewing the original dataset, we observe that our NBA dataset includes player-level statistics, such as:
 
